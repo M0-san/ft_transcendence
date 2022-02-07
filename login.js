@@ -44,11 +44,25 @@ var axios_1 = require("axios");
 //   code: string;
 //   redirect_uri: string;
 // }
-var JWT = /** @class */ (function () {
-    function JWT() {
+// class JWT {
+//   access_token: string;
+//   token_type: string;
+//   expires_in: number;
+//   refresh_token: string;
+//   scope: string;
+//   created_at: string;
+// }
+// getUserData('8128c96b44f4dd1ca4b092f0792afbfa017241fcb354b6a7e1b46bd85709fc21');
+var options = {
+    method: "POST",
+    hostname: "api.intra.42.fr",
+    port: null,
+    path: "/oauth/token",
+    headers: {
+        "content-type": "application/json",
+        "cache-control": "no-cache"
     }
-    return JWT;
-}());
+};
 function getAccessToken(code) {
     return __awaiter(this, void 0, void 0, function () {
         var payload, ret;
@@ -56,18 +70,18 @@ function getAccessToken(code) {
             switch (_a.label) {
                 case 0:
                     payload = {
-                        grant_type: 'authorization_code',
-                        client_id: 'ad4f677e23cf5507f21626bc669fe6b98c459acb29ddd7d03843d51aad6b7694',
-                        client_secret: '36f62b7e5d5715f4440a032c40aaf1af8c68dc9dd15321ce9a42635a54ede385',
-                        redirect_uri: 'http://localhost:3000',
+                        grant_type: "authorization_code",
+                        client_id: "34c469cbd053f27f00bea12177cdc27a557362e9be693e62a981a1776bcf1a23",
+                        client_secret: "0d64ef2b1460aa1feb4bc8287d49d70a923e2bdbae3c2b1654e81ef7ba75df04",
+                        redirect_uri: "http://localhost:3000",
                         code: code
                     };
                     return [4 /*yield*/, (0, axios_1["default"])({
-                            method: 'post',
-                            url: 'https://api.intra.42.fr/oauth/token',
+                            method: "post",
+                            url: "https://api.intra.42.fr/oauth/token",
                             data: JSON.stringify(payload),
                             headers: {
-                                'content-type': 'application/json'
+                                "content-type": "application/json"
                             }
                         }).then(function (response) {
                             ret = response.data.access_token;
@@ -79,55 +93,32 @@ function getAccessToken(code) {
         });
     });
 }
-var getUserData = function (code) {
-    (0, axios_1["default"])({
-        method: 'GET',
-        url: 'https://api.intra.42.fr/v2/me',
-        headers: {
-            authorization: "Bearer ".concat(getAccessToken(code).then(function (access_token) { return access_token; })),
-            'content-type': 'application/json'
-        }
-    }).then(function (response) {
-        console.log(response.data);
+function getUserData(code) {
+    return __awaiter(this, void 0, void 0, function () {
+        var access_token, userData;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, getAccessToken(code).then(function (res) { return (access_token = res); })];
+                case 1:
+                    _a.sent();
+                    console.log(access_token);
+                    return [4 /*yield*/, (0, axios_1["default"])({
+                            method: "GET",
+                            url: "https://api.intra.42.fr/v2/me",
+                            headers: {
+                                authorization: "Bearer ".concat(access_token),
+                                "content-type": "application/json"
+                            }
+                        }).then(function (response) {
+                            var _a = response.data, id = _a.id, email = _a.email, username = _a.login, avatar = _a.image_url;
+                            userData = { id: id, username: username, email: email, avatar: avatar };
+                        })];
+                case 2:
+                    _a.sent();
+                    console.log(userData);
+                    return [2 /*return*/, userData];
+            }
+        });
     });
-};
-getUserData('8128c96b44f4dd1ca4b092f0792afbfa017241fcb354b6a7e1b46bd85709fc21');
-/*
-
-const options = {
-  method: 'POST',
-  hostname: 'api.intra.42.fr',
-  port: null,
-  path: '/oauth/token',
-  headers: {
-    'content-type': 'application/json',
-    'cache-control': 'no-cache',
-  },
-};
-
-const req = https.http.request(options, function (res) {
-  const chunks = [];
-
-  res.on('data', function (chunk) {
-    chunks.push(chunk);
-  });
-
-  res.on('end', function () {
-    const body = Buffer.concat(chunks);
-    console.log(body.toString());
-  });
-});
-
-req.write(
-  JSON.stringify({
-    grant_type: 'authorization_code',
-    client_id:
-      'ad4f677e23cf5507f21626bc669fe6b98c459acb29ddd7d03843d51aad6b7694',
-    client_secret:
-      '36f62b7e5d5715f4440a032c40aaf1af8c68dc9dd15321ce9a42635a54ede385',
-    redirect_uri: 'http://localhost:3000',
-    code: '9fa6ca09c19f1d15756899d20a63fd0b0700ad2e76cb2f6c4108eda451d567b4',
-  }),
-);
-req.end();
-*/
+}
+getUserData("5e63d538498b64c893a1f7cc01500f7423692c3442b6dc837b2e6aea6cbf5d92");

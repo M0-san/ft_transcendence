@@ -5,19 +5,14 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private readonly _usersService: UsersService) {}
 
-  @Post()
-  login()
-
   @Get()
   getAll(@Query() paginationQuery: any) {
     // any will be replaced by the appropriate DTO.
     const { like, limit } = paginationQuery;
-    return this._usersService.findAll();
   }
 
   @Get('/:id')
   getOne(@Param('id') userId: number) {
-    this._usersService.findOne(userId);
   }
 
   @Get('/me')
